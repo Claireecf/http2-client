@@ -4,6 +4,7 @@ use std::fs::OpenOptions;
 use chrono::DateTime;
 use chrono::offset::Utc;
 use std::io::Write;
+use isahc::{config::SslOption, prelude::*, Request};
 use std::{time::SystemTime};
 use isahc::{
     config::VersionNegotiation,
@@ -22,8 +23,10 @@ fn main() -> Result<(), isahc::Error> {
     let content = String::from("HTTP3 page visit start time is: ");
     file.write_all(content.as_bytes()).unwrap();
     file.write_all(datetime.format("%m/%d/%Y %T%.3f\n").to_string().as_bytes()).unwrap();
+
     let http2_client = HttpClient::builder()
     .version_negotiation(VersionNegotiation::http2())
+    .ssl_options(SslOption::DANGER_ACCEPT_INVALID_CERTS | SslOption::DANGER_ACCEPT_REVOKED_CERTS)
     .build()?;
     
     let mut response = http2_client.get(url)?;
