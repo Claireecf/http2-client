@@ -28,8 +28,15 @@ fn main() -> Result<(), isahc::Error> {
     .version_negotiation(VersionNegotiation::http2())
     .ssl_options(SslOption::DANGER_ACCEPT_INVALID_CERTS | SslOption::DANGER_ACCEPT_REVOKED_CERTS)
     .build()?;
+
+
+    let mut response = Request::get("https://badssl.com")
+    .ssl_options(SslOption::DANGER_ACCEPT_INVALID_CERTS | SslOption::DANGER_ACCEPT_REVOKED_CERTS)
+    .body(())?
+    .send()?;
+
     
-    let mut response = http2_client.get(url)?;
+    // let mut response = http2_client.get(url)?;
 
     // Print some basic info about the response to standard output.
     // println!("Status: {}", response.status());
