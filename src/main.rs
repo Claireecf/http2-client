@@ -33,12 +33,14 @@ fn init_tracer() -> impl Tracer {
         .install_simple()
 }
 
-fn main() -> Result<(), isahc::Error> {
+fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     // Send a GET request and wait for the response headers.
     // Must be `mut` so we can read the response body.
     // HTTP/2 with prior knowledge.
-    // let args: Vec<String> = env::args().collect();
-    // let url = &args[1];
+    global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
+    let tracer = opentelemetry_jaeger::new_agent_pipeline().install_simple()?;
+    let args: Vec<String> = env::args().collect();
+    let url = &args[1];
     // let mut file = OpenOptions::new().write(true).read(true).append(true).create(true).open("time.txt").unwrap();
     // let start = SystemTime::now();
     // let datetime: DateTime<Utc> = start.into();
